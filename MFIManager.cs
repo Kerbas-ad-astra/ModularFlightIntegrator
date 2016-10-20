@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ModularFI
 {
@@ -13,7 +12,7 @@ namespace ModularFI
             {
                 print("[MFIManager] FlightIntegrator is active. Deactivating it");
 
-                VesselModuleManager.RemoveModuleOfType(typeof (FlightIntegrator));
+                VesselModuleManager.SetWrapperActive(typeof (FlightIntegrator), false);
             }
             // Should we display this only if we deactivated the stock FI ?
             string msg = "[MFIManager] Current active VesselModule : \n";
@@ -23,6 +22,18 @@ namespace ModularFI
                        " order=" + vesselModuleWrapper.order + "\n";
             }
             print(msg);
+
+            GameEvents.onVesselPrecalcAssign.Add(AddModularPrecalc);
+        }
+
+        private void OnDestroy()
+        {
+            GameEvents.onVesselPrecalcAssign.Remove(AddModularPrecalc);
+        }
+
+        private void AddModularPrecalc(Vessel vessel)
+        {
+            vessel.gameObject.AddComponent<ModularVesselPrecalculate>();
         }
     }
 }
